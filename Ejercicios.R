@@ -49,49 +49,70 @@ sourceCpp("merge_sort.cpp")
 #######################################
 
 # n = 10,000
-insertion_10000 <- microbenchmark(insertionsortC(rnorm(10000)), times = 50)
-merge_10000 <- microbenchmark(mergesortC(rnorm(10000)), times = 50)
+insertion_10000 <- microbenchmark(insertionsortC(rnorm(10000)), times = 50, unit = "s")
+merge_10000 <- microbenchmark(mergesortC(rnorm(10000)), times = 50, unit = "s")
 
-data.frame(insertion = insertion_10000$time,
-           merge = merge_10000$time) %>%
+data.frame(insertion = insertion_10000$time/1000000000,
+           merge = merge_10000$time/1000000000) %>%
   mutate(iteracion = 1:nrow(.)) %>% 
   gather(algoritmo, tiempo, 1:2) %>% 
   ggplot() +
   geom_boxplot(aes(x = algoritmo, y = tiempo)) +
   ggtitle("Desempeño de algoritmos con n = 10,000") +
-  ggsave("out/Comparacion_sorts_10000.png")
+  ylab("Tiempo en segundos") +
+  theme_bw() +
+  ggsave("out/Comparacion_sorts_10000.png") 
 
-
+data.frame(insertion = insertion_10000$time/1000000000,
+           merge = merge_10000$time/1000000000) %>%
+  write.table("out/tiempos_sorts_10000",
+              sep = "|",
+              row.names = F)
 
 
 # n = 100,000
-insertion_100000 <- microbenchmark(insertionsortC(rnorm(100000)), times = 10)
-merge_100000 <- microbenchmark(mergesortC(rnorm(100000)), times = 10)
+insertion_100000 <- microbenchmark(insertionsortC(rnorm(100000)), times = 10, unit = "s")
+merge_100000 <- microbenchmark(mergesortC(rnorm(100000)), times = 10, unit = "s")
 
-data.frame(insertion = insertion_100000$time,
-           merge = merge_100000$time) %>%
+data.frame(insertion = insertion_100000$time/1000000000,
+           merge = merge_100000$time/1000000000) %>%
   mutate(iteracion = 1:nrow(.)) %>% 
   gather(algoritmo, tiempo, 1:2) %>% 
   ggplot() +
   geom_boxplot(aes(x = algoritmo, y = tiempo)) +
   ggtitle("Desempeño de algoritmos con n = 100,000") +
+  ylab("Tiempo en segundos") +
+  theme_bw() +
   ggsave("out/Comparacion_sorts_100000.png")
 
+data.frame(insertion = insertion_100000$time/1000000000,
+           merge = merge_100000$time/1000000000) %>%
+  write.table("out/tiempos_sorts_100000",
+              sep = "|",
+              row.names = F)
 
 
 
 # n = 1,000,000
-insertion_1000000 <- microbenchmark(insertionsortC(rnorm(100000)), times = 10)
-merge_1000000 <- microbenchmark(mergesortC(rnorm(1000000)), times = 10)
+insertion_1000000 <- microbenchmark(insertionsortC(rnorm(1000000)), times = 10, unit = "s")
+merge_1000000 <- microbenchmark(mergesortC(rnorm(1000000)), times = 10, unit = "s")
 
-data.frame(insertion = insertion_1000000$time,
-           merge = merge_1000000$time) %>%
+data.frame(insertion = insertion_1000000$time/1000000000,
+           merge = merge_1000000$time/1000000000) %>%
   mutate(iteracion = 1:nrow(.)) %>% 
   gather(algoritmo, tiempo, 1:2) %>% 
   ggplot() +
   geom_boxplot(aes(x = algoritmo, y = tiempo)) +
   ggtitle("Desempeño de algoritmos con n = 1,000,000") +
+  ylab("Tiempo en segundos") +
+  theme_bw() +
   ggsave("out/Comparacion_sorts_1000000.png")
+
+data.frame(insertion = insertion_1000000$time/1000000000,
+           merge = merge_1000000$time/1000000000) %>%
+  write.table("out/tiempos_sorts_1000000",
+              sep = "|",
+              row.names = F)
 
 
 #######################################
@@ -128,15 +149,15 @@ NumericVector bubble_sort_cpp(NumericVector vec_in) {
 #######################################
 
 datos1 <- data.frame(n = seq(1, 50, 0.5)) %>% 
-  mutate(logaritmo = 64*n*log(n)/log(2),
-         cuadrado = 8*n^2) %>% 
-  gather(func, valores, logaritmo:cuadrado)
+  mutate(MyF = 64*n*log(n)/log(2),
+         Inserc = 8*n^2) %>% 
+  gather(func, valores, MyF:Inserc)
 
 
 datos2 <- data.frame(n = seq(1, 30, 0.5)) %>% 
-  mutate(logaritmo = 32*n*log(n)/log(2) + 5*n,
-         cuadrado = 6*n^2) %>% 
-  gather(func, valores, logaritmo:cuadrado)
+  mutate(MyF = 32*n*log(n)/log(2) + 5*n,
+         Inserc = 6*n^2) %>% 
+  gather(func, valores, MyF:Inserc)
 
 datos1 %>% 
   ggplot(aes(x = n, y = valores, group = func)) +
