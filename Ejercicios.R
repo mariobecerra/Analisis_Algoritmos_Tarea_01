@@ -11,37 +11,12 @@ library(microbenchmark)
 #######################################
 
 #######################################
-### Insertion sort
-### http://recologia.com.br/2013/10/insertionsort-em-r-e-c-usando-o-pacote-rcpp/
-#######################################
-
-cppFunction("
-    NumericVector insertionsortC(NumericVector vetor) {
-        int n = vetor.size();
- 
-        double aux;
-        int i , j;
- 
-        for(i=1;i<n;i++) {
-            aux=vetor[i];
-            j=i-1;
-            while(j>=0 && vetor[j]>aux) {
-                vetor[j+1]=vetor[j];
-                j=j-1;
-                }
-            vetor[j+1]=aux;
-            }
-        return vetor;
-        }
-")
-
-
-#######################################
-### Merge sort
-### # http://recologia.com.br/2014/09/mergesort-em-c-usando-o-pacote-rcpp/
+### Insertion sort: http://recologia.com.br/2013/10/insertionsort-em-r-e-c-usando-o-pacote-rcpp/
+### Merge sort: http://recologia.com.br/2014/09/mergesort-em-c-usando-o-pacote-rcpp/
 #######################################
 
 sourceCpp("merge_sort.cpp")
+sourceCpp("insertion_sort.cpp")
 
 
 #######################################
@@ -49,8 +24,9 @@ sourceCpp("merge_sort.cpp")
 #######################################
 
 # n = 10,000
-insertion_10000 <- microbenchmark(insertionsortC(rnorm(10000)), times = 50, unit = "s")
-merge_10000 <- microbenchmark(mergesortC(rnorm(10000)), times = 50, unit = "s")
+x <- rnorm(10000)
+insertion_10000 <- microbenchmark(insertionsortC(x), times = 50, unit = "s")
+merge_10000 <- microbenchmark(mergesortC(x), times = 50, unit = "s")
 
 data.frame(insertion = insertion_10000$time/1000000000,
            merge = merge_10000$time/1000000000) %>%
@@ -71,8 +47,9 @@ data.frame(insertion = insertion_10000$time/1000000000,
 
 
 # n = 100,000
-insertion_100000 <- microbenchmark(insertionsortC(rnorm(100000)), times = 10, unit = "s")
-merge_100000 <- microbenchmark(mergesortC(rnorm(100000)), times = 10, unit = "s")
+x <- rnorm(100000)
+insertion_100000 <- microbenchmark(insertionsortC(x), times = 10, unit = "s")
+merge_100000 <- microbenchmark(mergesortC(x), times = 10, unit = "s")
 
 data.frame(insertion = insertion_100000$time/1000000000,
            merge = merge_100000$time/1000000000) %>%
@@ -94,8 +71,9 @@ data.frame(insertion = insertion_100000$time/1000000000,
 
 
 # n = 1,000,000
-insertion_1000000 <- microbenchmark(insertionsortC(rnorm(1000000)), times = 10, unit = "s")
-merge_1000000 <- microbenchmark(mergesortC(rnorm(1000000)), times = 10, unit = "s")
+x <- rnorm(1000000)
+insertion_1000000 <- microbenchmark(insertionsortC(x), times = 10, unit = "s")
+merge_1000000 <- microbenchmark(mergesortC(x), times = 10, unit = "s")
 
 data.frame(insertion = insertion_1000000$time/1000000000,
            merge = merge_1000000$time/1000000000) %>%
